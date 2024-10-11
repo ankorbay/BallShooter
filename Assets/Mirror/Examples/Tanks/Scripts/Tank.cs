@@ -6,13 +6,10 @@ namespace Mirror.Examples.Tanks
     public class Tank : NetworkBehaviour
     {
         [Header("Components")]
-        public NavMeshAgent agent;
-        public Animator  animator;
-        public TextMesh  healthBar;
         public Transform turret;
 
         [Header("Movement")]
-        public float rotationSpeed = 100;
+        public float movementSpeed = 3;
 
         [Header("Firing")]
         public KeyCode shootKey = KeyCode.Space;
@@ -24,25 +21,18 @@ namespace Mirror.Examples.Tanks
 
         void Update()
         {
-            // always update health bar.
-            // (SyncVar hook would only update on clients, not on server)
-            healthBar.text = new string('-', health);
-            
+           
             // take input from focused window only
             if(!Application.isFocused) return; 
 
             // movement for local player
             if (isLocalPlayer)
             {
-                // rotate
-                float horizontal = Input.GetAxis("Horizontal");
-                transform.Rotate(0, horizontal * rotationSpeed * Time.deltaTime, 0);
-
                 // move
-                float vertical = Input.GetAxis("Vertical");
-                Vector3 forward = transform.TransformDirection(Vector3.forward);
-                agent.velocity = forward * Mathf.Max(vertical, 0) * agent.speed;
-                animator.SetBool("Moving", agent.velocity != Vector3.zero);
+                float horizontal = Input.GetAxis("Horizontal");
+                transform.Translate(horizontal * movementSpeed * Time.deltaTime, 0f, 0f);
+                // clamp position x from -8 to 8
+                transform.position = new Vector3(Mathf.Clamp(transform.position.x, -8f, 8f), 0, 0);
 
                 // shoot
                 if (Input.GetKeyDown(shootKey))
@@ -60,14 +50,6 @@ namespace Mirror.Examples.Tanks
         {
             GameObject projectile = Instantiate(projectilePrefab, projectileMount.position, projectileMount.rotation);
             NetworkServer.Spawn(projectile);
-            RpcOnFire();
-        }
-
-        // this is called on the tank that fired for all observers
-        [ClientRpc]
-        void RpcOnFire()
-        {
-            animator.SetTrigger("Shoot");
         }
 
         //[ServerCallback]
@@ -83,6 +65,7 @@ namespace Mirror.Examples.Tanks
 
         void RotateTurret()
         {
+            if (Camera.main == null) return;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit, 100))
             {
