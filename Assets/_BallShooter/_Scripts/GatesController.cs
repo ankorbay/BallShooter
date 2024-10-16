@@ -42,7 +42,8 @@ public class GatesController : NetworkBehaviour
 #endif
     private StarterAssetsInputs _input;
     private float _cinemachineTargetPitch;
-    private float _rotationVelocity;
+    private float _rotationVelocityX;
+    private float _rotationVelocityY;
     
 
     private bool IsCurrentDeviceMouse
@@ -74,7 +75,6 @@ public class GatesController : NetworkBehaviour
 #else
 			Debug.LogError( "Starter Assets package is missing dependencies. Please use Tools/Starter Assets/Reinstall Dependencies to fix it");
 #endif
-
     }
     
 
@@ -115,23 +115,15 @@ public class GatesController : NetworkBehaviour
     
     private void GunRotation()
     {
-        // if there is an input
         if (_input.look.sqrMagnitude >= 0.01f)
         {
-            //Don't multiply mouse input by Time.deltaTime
             float deltaTimeMultiplier = IsCurrentDeviceMouse ? 1.0f : Time.deltaTime;
-
-            _cinemachineTargetPitch += _input.look.y * RotationSpeed * deltaTimeMultiplier;
-            _rotationVelocity = _input.look.x * RotationSpeed * deltaTimeMultiplier;
-
-            // clamp our pitch rotation
-            _cinemachineTargetPitch = ClampAngle(_cinemachineTargetPitch, BottomClamp, TopClamp);
-
-            // Update Cinemachine camera target pitch
-            CinemachineCameraTarget.transform.localRotation = Quaternion.Euler(_cinemachineTargetPitch, 0.0f, 0.0f);
-
-            // rotate the player left and right
-            turret.Rotate(Vector3.up * _rotationVelocity);
+            
+            _rotationVelocityX = _input.look.x * RotationSpeed * deltaTimeMultiplier;
+            _rotationVelocityY = _input.look.y * RotationSpeed * deltaTimeMultiplier;
+            
+            turret.Rotate(Vector3.up * _rotationVelocityX + Vector3.right * _rotationVelocityY);
+            turret.localRotation = Quaternion.Euler(turret.localRotation.eulerAngles.x, turret.localRotation.eulerAngles.y, 0);
         }
     }
 
