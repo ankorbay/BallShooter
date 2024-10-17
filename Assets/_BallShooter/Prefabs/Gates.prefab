@@ -279,7 +279,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -509,7 +509,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7612555456923176313}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b60c88a7a4f1d3445b6a755487d4de79, type: 3}
   m_Name: 
@@ -523,12 +523,13 @@ MonoBehaviour:
   RotationSpeed: 1
   projectilePrefab: {fileID: 3939471465383996869, guid: a069996bf2a4cda488287252a9ea787d, type: 3}
   projectileMount: {fileID: 1833594746420814584}
-  chargeTime: 2
-  baseBulletSpeed: 2000
+  fullChargeDuration: 3
+  baseBulletSpeed: 1000
   CinemachineCameraTarget: {fileID: 2752394834240138145}
   TopClamp: 89
   BottomClamp: -89
-  _bulletChargeTime: 0
+  points: 100
+  _bulletChargeValue: 0
 --- !u!114 &4846047975528982049
 MonoBehaviour:
   m_ObjectHideFlags: 0

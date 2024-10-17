@@ -1,7 +1,7 @@
 using Mirror;
-using Mirror.Examples.Tanks;
 using StarterAssets;
 using UnityEngine;
+using UnityEngine.Serialization;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
@@ -22,7 +22,7 @@ public class GatesController : NetworkBehaviour
     [Header("Firing")]
     public GameObject projectilePrefab;
     public Transform  projectileMount;
-    public float chargeTime = 2f;
+    public float fullChargeDuration = 3f;
     public float baseBulletSpeed = 1000f;
 
     [Header("Cinemachine")]
@@ -33,18 +33,18 @@ public class GatesController : NetworkBehaviour
     [Tooltip("How far in degrees can you move the camera down")]
     public float BottomClamp = -90.0f;
     
-
-    [Header("Stats")]
-    [SyncVar] public float _bulletChargeTime = 0f;
+    [Header("Stats")] 
+    [SyncVar] public int points;
 
 #if ENABLE_INPUT_SYSTEM
     private PlayerInput _playerInput;
 #endif
     private StarterAssetsInputs _input;
-    private float _cinemachineTargetPitch;
     private float _rotationVelocityX;
     private float _rotationVelocityY;
-    
+    private bool _isCharging;
+    private float _bulletChargeValue;
+    private float _currentForce;
 
     private bool IsCurrentDeviceMouse
     {
@@ -60,6 +60,7 @@ public class GatesController : NetworkBehaviour
 
     public override void OnStartAuthority()
     {
+        enabled = true;
         mainCameraTransform.gameObject.SetActive(true);
         _input.enabled = true;
 #if ENABLE_INPUT_SYSTEM
@@ -76,7 +77,6 @@ public class GatesController : NetworkBehaviour
 			Debug.LogError( "Starter Assets package is missing dependencies. Please use Tools/Starter Assets/Reinstall Dependencies to fix it");
 #endif
     }
-    
 
     void Update()
     {
@@ -84,17 +84,48 @@ public class GatesController : NetworkBehaviour
         
         transform.Translate(_input.move.x * movementSpeed * Time.deltaTime, 0f, 0f);
         
-        if (Mouse.current.leftButton.isPressed)
+        if (Mouse.current.leftButton.wasPressedThisFrame)
         {
-            _bulletChargeTime += Time.deltaTime;
+            StartCharging();
         }
-
-        if (Mouse.current.leftButton.wasReleasedThisFrame)
+        else if (Mouse.current.leftButton.isPressed)
         {
-            CmdFire();
+            ContinueCharging();
+        }
+        else if (Mouse.current.leftButton.wasReleasedThisFrame)
+        {
+            Fire();
         }
     }
+
+    private void StartCharging()
+    {
+        Debug.Log("Start charging");
+        _isCharging = true;
+        _bulletChargeValue = 0f;
+    }
     
+    private void ContinueCharging()
+    {
+        if (_isCharging)
+        {
+            _bulletChargeValue += Time.deltaTime;
+            _bulletChargeValue = Mathf.Clamp(_bulletChargeValue, 0.5f, fullChargeDuration); // Clamp to max force
+        }
+    }
+    private void Fire()
+    {
+        Debug.Log("Fire is called, isCharging: " + _isCharging + " bulletChargeValue: " + _bulletChargeValue);
+        if (_isCharging)
+        {
+            _isCharging = false;
+            _currentForce = baseBulletSpeed * _bulletChargeValue;
+            CmdFire(_currentForce);
+            _bulletChargeValue = 0f;
+            _currentForce = 0f;
+        }
+    }
+
     private void LateUpdate()
     {
         if (isLocalPlayer)
@@ -102,17 +133,13 @@ public class GatesController : NetworkBehaviour
     }
     
     [Command]
-    void CmdFire()
+    void CmdFire(float force)
     {
-        float chargeValue = _bulletChargeTime / chargeTime;
-        Debug.Log("Charge value: " + chargeValue);
-        float bulletSpeed = baseBulletSpeed * chargeValue;
-        GameObject projectile = Instantiate(projectilePrefab, projectileMount.position, projectileMount.rotation);
-        projectile.GetComponent<Projectile>().force = bulletSpeed;
-        NetworkServer.Spawn(projectile);
-        _bulletChargeTime = 0f;
+        BallBullet bullet = Instantiate(projectilePrefab, projectileMount.position, projectileMount.rotation).GetComponent<BallBullet>();
+        bullet.rigidBody.AddForce(projectileMount.forward * force);
+        NetworkServer.Spawn(bullet.gameObject);
     }
-    
+
     private void GunRotation()
     {
         if (_input.look.sqrMagnitude >= 0.01f)
@@ -125,12 +152,5 @@ public class GatesController : NetworkBehaviour
             turret.Rotate(Vector3.up * _rotationVelocityX + Vector3.right * _rotationVelocityY);
             turret.localRotation = Quaternion.Euler(turret.localRotation.eulerAngles.x, turret.localRotation.eulerAngles.y, 0);
         }
-    }
-
-    private static float ClampAngle(float lfAngle, float lfMin, float lfMax)
-    {
-        if (lfAngle < -360f) lfAngle += 360f;
-        if (lfAngle > 360f) lfAngle -= 360f;
-        return Mathf.Clamp(lfAngle, lfMin, lfMax);
     }
 }
