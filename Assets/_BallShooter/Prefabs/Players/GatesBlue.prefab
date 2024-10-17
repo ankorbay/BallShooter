@@ -158,7 +158,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 2bcff556fc82a1e438af59d8de5fab11, type: 2}
+  - {fileID: 2100000, guid: 40c20b5cb88281248b8493f5f66a6b9b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -242,7 +242,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 2bcff556fc82a1e438af59d8de5fab11, type: 2}
+  - {fileID: 2100000, guid: 40c20b5cb88281248b8493f5f66a6b9b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -347,7 +347,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 2bcff556fc82a1e438af59d8de5fab11, type: 2}
+  - {fileID: 2100000, guid: 40c20b5cb88281248b8493f5f66a6b9b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -478,7 +478,7 @@ GameObject:
   - component: {fileID: 4489084199096780794}
   - component: {fileID: 1219159760474054001}
   m_Layer: 0
-  m_Name: Gates
+  m_Name: GatesBlue
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -529,7 +529,6 @@ MonoBehaviour:
   TopClamp: 89
   BottomClamp: -89
   points: 100
-  _bulletChargeValue: 0
 --- !u!114 &4846047975528982049
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -543,7 +542,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneId: 0
-  _assetId: 3084381949
+  _assetId: 448264764
   serverOnly: 0
   visibility: 0
   hasSpawned: 0
