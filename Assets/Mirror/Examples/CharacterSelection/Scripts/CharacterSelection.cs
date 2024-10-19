@@ -27,7 +27,7 @@ namespace Mirror.Examples.CharacterSelection
 
         void HookSetColor(Color _old, Color _new)
         {
-            //Debug.Log("HookSetColor");
+            Debug.Log("HookSetColor");
             AssignColours();
         }
 
@@ -47,7 +47,7 @@ namespace Mirror.Examples.CharacterSelection
 
         public void AssignName()
         {
-            textMeshName.text = playerName;
+            // textMeshName.text = playerName;
         }
 
         // To change server controlled sync vars, clients end Commands, and the hooks will fire

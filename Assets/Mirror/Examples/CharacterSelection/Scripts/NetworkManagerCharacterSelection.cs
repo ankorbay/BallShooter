@@ -103,6 +103,7 @@ namespace Mirror.Examples.CharacterSelection
 
             // call this to use this gameobject as the primary controller
             NetworkServer.AddPlayerForConnection(conn, playerObject);
+            Debug.Log("---------->>>> NetworkServer.AddPlayerForConnection");
         }
 
         void OnReplaceCharacterMessage(NetworkConnectionToClient conn, ReplaceCharacterMessage message)

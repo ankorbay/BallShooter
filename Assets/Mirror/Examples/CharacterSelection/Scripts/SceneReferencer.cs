@@ -10,8 +10,8 @@ namespace Mirror.Examples.CharacterSelection
 
         private CharacterData characterData;
         public GameObject characterSelectionObject;
-        public GameObject sceneObjects;
-        public GameObject cameraObject;
+        public GameObject lobbyUIObject;
+        public GameObject environment;
 
         private void Start()
         {
@@ -27,20 +27,17 @@ namespace Mirror.Examples.CharacterSelection
 
         public void ButtonCharacterSelection()
         {
-            // server-only mode should not press this button
-            //Debug.Log("ButtonCharacterSelection");
-            cameraObject.SetActive(false);
-            sceneObjects.SetActive(false);
             characterSelectionObject.SetActive(true);
+            lobbyUIObject.SetActive(false);
+            environment.SetActive(false);
             this.GetComponent<Canvas>().enabled = false;
         }
 
         public void CloseCharacterSelection()
         {
-            //Debug.Log("CloseCharacterSelection");
-            cameraObject.SetActive(true);
             characterSelectionObject.SetActive(false);
-            sceneObjects.SetActive(true);
+            lobbyUIObject.SetActive(true);
+            environment.SetActive(true);
             this.GetComponent<Canvas>().enabled = true;
         }
     }
