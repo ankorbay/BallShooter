@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
-    guid: 8c9cfa26abfee488c85f1582747f6a02
+    path: Assets/_BallShooter/Scenes/ColorSelection.unity
+    guid: 59144a0c1b697ba4ea03f332309a8bc1
+  - enabled: 1
+    path: Assets/_BallShooter/Scenes/LobbyGame.unity
+    guid: 393c70202e5226e4aa289fb197d79ea6
   m_configObjects: {}
