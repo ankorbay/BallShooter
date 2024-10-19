@@ -1,5 +1,7 @@
+using System;
 using Mirror;
 using StarterAssets;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
 #if ENABLE_INPUT_SYSTEM
@@ -12,6 +14,8 @@ public class GatesController : NetworkBehaviour
     public Transform mainCameraTransform;
     [Header("Components")]
     public Transform turret;
+
+    public TextMeshProUGUI pointsText;
 
     [Header("Movement")]
     public float movementSpeed = 3;
@@ -45,6 +49,7 @@ public class GatesController : NetworkBehaviour
     private bool _isCharging;
     private float _bulletChargeValue;
     private float _currentForce;
+    private Material _cachedMaterial;
 
     private bool IsCurrentDeviceMouse
     {
@@ -96,6 +101,9 @@ public class GatesController : NetworkBehaviour
         {
             Fire();
         }
+
+        if(pointsText != null)
+            pointsText.text = points.ToString();
     }
 
     private void StartCharging()
