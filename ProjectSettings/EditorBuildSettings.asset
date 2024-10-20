@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/_BallShooter/Scenes/Initial.unity
+    guid: a2587c2faf34b574cb5dd3369c55c9b8
+  - enabled: 1
     path: Assets/_BallShooter/Scenes/ColorSelection.unity
     guid: 59144a0c1b697ba4ea03f332309a8bc1
   - enabled: 1
