@@ -14,7 +14,7 @@ namespace Mirror.Examples.CharacterSelection
         public static new NetworkManagerCharacterSelection singleton => (NetworkManagerCharacterSelection)NetworkManager.singleton;
         private CharacterData characterData;
 
-        public override void Awake()
+        public override void Start()
         {
             characterData = CharacterData.characterDataSingleton;
             if (characterData == null)
