@@ -38,7 +38,8 @@ public class GatesController : NetworkBehaviour
     public float BottomClamp = -90.0f;
     
     [Header("Stats")] 
-    [SyncVar] public int points;
+    [SyncVar(hook = nameof(OnPointsChanged))]
+    public int points;
 
 #if ENABLE_INPUT_SYSTEM
     private PlayerInput _playerInput;
@@ -101,9 +102,6 @@ public class GatesController : NetworkBehaviour
         {
             Fire();
         }
-
-        if(pointsText != null)
-            pointsText.text = points.ToString();
     }
 
     private void StartCharging()
@@ -144,6 +142,7 @@ public class GatesController : NetworkBehaviour
     void CmdFire(float force)
     {
         BallBullet bullet = Instantiate(projectilePrefab, projectileMount.position, projectileMount.rotation).GetComponent<BallBullet>();
+        bullet.Initialize(this);
         bullet.rigidBody.AddForce(projectileMount.forward * force);
         NetworkServer.Spawn(bullet.gameObject);
     }
@@ -159,6 +158,19 @@ public class GatesController : NetworkBehaviour
             
             turret.Rotate(Vector3.up * _rotationVelocityX + Vector3.right * _rotationVelocityY);
             turret.localRotation = Quaternion.Euler(turret.localRotation.eulerAngles.x, turret.localRotation.eulerAngles.y, 0);
+        }
+    }
+    
+    private void OnPointsChanged(int oldPoints, int newPoints)
+    {
+        UpdatePointsText(newPoints);
+    }
+    
+    private void UpdatePointsText(int newPoints)
+    {
+        if (pointsText != null)
+        {
+            pointsText.text = newPoints.ToString();
         }
     }
 }
