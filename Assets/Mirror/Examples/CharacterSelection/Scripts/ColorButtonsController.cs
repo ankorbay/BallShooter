@@ -17,6 +17,12 @@ namespace Mirror.Examples.CharacterSelection
                 buttons = GetComponentsInChildren<Button>();
         }
 
+        private void Start()
+        {
+            if(buttons.Length != 0)
+                OnColorSelected?.Invoke(buttons[0].image.color);
+        }
+
         private void OnEnable()
         {
             foreach (Button button in buttons)
