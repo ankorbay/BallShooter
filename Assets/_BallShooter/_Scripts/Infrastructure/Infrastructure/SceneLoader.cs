@@ -15,10 +15,10 @@ namespace Infrastructure
             _coroutineRunner = coroutineRunner;
         }
 
-        public void Load(string name, Action onLoaded = null) => 
-            _coroutineRunner.StartCoroutine(LoadScene(name,onLoaded));
+        public void Load(string name,LoadSceneMode mode = LoadSceneMode.Single, Action onLoaded = null) => 
+            _coroutineRunner.StartCoroutine(LoadScene(name, mode, onLoaded));
 
-        public IEnumerator LoadScene(string name, Action onLoaded = null)
+        public IEnumerator LoadScene(string name, LoadSceneMode mode = LoadSceneMode.Single, Action onLoaded = null)
         {
             if (SceneManager.GetActiveScene().name == name)
             {
@@ -26,7 +26,7 @@ namespace Infrastructure
                 yield break;
             }
             
-            AsyncOperation waitNextScene = SceneManager.LoadSceneAsync(name);
+            AsyncOperation waitNextScene = SceneManager.LoadSceneAsync(name, mode);
 
             while (!waitNextScene.isDone)
                 yield return null;
