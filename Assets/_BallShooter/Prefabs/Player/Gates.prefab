@@ -985,16 +985,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 7612555456923176313}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e04a8cb02afdc4e778925020d233d718, type: 3}
+  m_Script: {fileID: 11500000, guid: d9469b2dae2440d1868e1d88642cb557, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  floatingInfo: {fileID: 1143562152944841480}
-  characterNumber: 1
-  textMeshName: {fileID: 0}
-  playerName: dd
   characterColour: {r: 1, g: 0.047169685, b: 0.047169685, a: 0}
   characterRenderers:
   - {fileID: 5729507015929436984}

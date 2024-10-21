@@ -941,7 +941,6 @@ MonoBehaviour:
   buttonExit: {fileID: 2818801610804987374}
   buttonGo: {fileID: 1967325269479008333}
   podiumPosition: {fileID: 4140141824957640908}
-  sceneReferencer: {fileID: 0}
 --- !u!1 &7903836433264727862
 GameObject:
   m_ObjectHideFlags: 0

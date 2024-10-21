@@ -13,30 +13,27 @@ namespace Infrastructure.Factory
 {
     public class GameFactory : IGameFactory
     {
-        private readonly GameStateMachine _gameStateMachine;
-        private readonly AllServices _services;
         private readonly IAssetProvider _assets;
         private readonly IStaticDataService _staticDataService;
 
-        public GameFactory(GameStateMachine gameStateMachine, LoadingCurtain loadingCurtain, AllServices services)
+        public GameFactory(IAssetProvider assetProvider, IStaticDataService staticDataService)
         {
-            _gameStateMachine = gameStateMachine;
-            _services = services;
-            _assets = _services.Single<IAssetProvider>();
-            _staticDataService = _services.Single<IStaticDataService>();
+            _assets = assetProvider;
+            _staticDataService = staticDataService;
         }
 
-        public async Task SpawnNetworkManager()
+        public void SpawnNetworkManager()
         {
-           NetworkManagerColorSelection networkManager = await _assets.Load<NetworkManagerColorSelection>(AssetAddress.NetworkManagerColorSelectionPath);
+           GameObject networkManagerPrefab = _assets.Instantiate(AssetAddress.NetworkManagerColorSelectionPath);
+           NetworkManagerColorSelection networkManager = networkManagerPrefab.GetComponent<NetworkManagerColorSelection>();
            networkManager.Configure(_staticDataService);
         }
 
-        public async Task<ColorSelectionController> SpawnColorSelectionController()
+        public ColorSelectionController SpawnColorSelectionController()
         {
-            GameObject colorSelectionPrefab = await _assets.Load<GameObject>(AssetAddress.ColorSelectionUI);
+            GameObject colorSelectionPrefab = _assets.Instantiate(AssetAddress.ColorSelectionUI);
             ColorSelectionController colorSelectionController = colorSelectionPrefab.GetComponent<ColorSelectionController>();
-            // colorSelectionController.Configure(_staticDataService);
+            colorSelectionController.Configure(_staticDataService);
             return colorSelectionController;
         }
 

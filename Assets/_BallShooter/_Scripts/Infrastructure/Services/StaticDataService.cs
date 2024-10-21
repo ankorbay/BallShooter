@@ -1,29 +1,23 @@
 using _BallShooter._Scripts.Infrastructure.Data;
 using Services;
+using UnityEngine;
 
 namespace _BallShooter._Scripts.Infrastructure.Services
 {
     public class StaticDataService: IStaticDataService
     {
-        public GameSettings GameSettings { get; }
-        
-        private readonly IAssetProvider _assetProvider;
-
-        public StaticDataService(IAssetProvider assetProvider)
+        public GameSettings GameSettings { get; private set; }
+        public StaticDataService Load()
         {
-            _assetProvider = assetProvider;
-        }
-
-        public void Load()
-        {
-            _assetProvider.Load<GameSettings>(AssetAddress.GameSettings);
+            GameSettings = Resources.Load<GameSettings>(AssetAddress.GameSettings);
+            return this;
         }
 
     }
 
     public interface IStaticDataService: IService
     {
-        void Load();
+        StaticDataService Load();
         GameSettings GameSettings { get; }
     }
 }

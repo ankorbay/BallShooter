@@ -35,7 +35,6 @@ namespace Mirror.Examples.CharacterSelection
             buttonExit.onClick.AddListener(ButtonExit);
             buttonGo.onClick.AddListener(ButtonGo);
             colorSelector.OnColorSelected += ColorSelectorOnOnColorSelected;
-            LoadData();
             SetupCharacters();
         }
 
@@ -85,18 +84,6 @@ namespace Mirror.Examples.CharacterSelection
             {
                 characterSelection.characterColour = StaticVariables.characterColour;
                 characterSelection.AssignColours();
-            }
-        }
-
-        private void LoadData()
-        {
-            if (StaticVariables.characterNumber > 0 && StaticVariables.characterNumber < characterData.characterPrefabs.Length)
-            {
-                currentlySelectedCharacter = StaticVariables.characterNumber;
-            }
-            else
-            {
-                StaticVariables.characterNumber = currentlySelectedCharacter;
             }
         }
     }

@@ -1,4 +1,5 @@
-﻿using Infrastructure.Factory;
+﻿using _BallShooter._Scripts.UI;
+using Infrastructure.Factory;
 using Infrastructure.Services;
 using Logic;
 using UnityEngine;
@@ -13,6 +14,7 @@ namespace Infrastructure.States.Infrastructure.States
         private readonly SceneLoader _sceneLoader;
         private readonly AllServices _services;
         private readonly LoadingCurtain _loadingCurtain;
+        private ColorSelectionController _colorSelectionController;
 
         public ColorSelectState(GameStateMachine stateMachine, SceneLoader sceneLoader, LoadingCurtain loadingCurtain, AllServices services)
         {
@@ -30,11 +32,18 @@ namespace Infrastructure.States.Infrastructure.States
         {
             Debug.Log($"Scene {ColorSelectScene} has been loaded");
             _services.Single<IGameFactory>().SpawnNetworkManager();
-            // _services.Single<IGameFactory>().SpawnColorSelectionUI();
+            _colorSelectionController = _services.Single<IGameFactory>().SpawnColorSelectionController();
+            _colorSelectionController.OnColorConfirmed += OnColorConfirmed;
+        }
+
+        private void OnColorConfirmed()
+        {
+            _stateMachine.Enter<GameState>();
         }
 
         public void Exit()
         {
+            _colorSelectionController.OnColorConfirmed -= OnColorConfirmed;
         }
     }
 }

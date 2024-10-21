@@ -1,8 +1,8 @@
-using _BallShooter._Scripts.Infrastructure;
+using System;
+using _BallShooter._Scripts.Infrastructure.Services;
 using _BallShooter._Scripts.Player;
 using Infrastructure;
 using Infrastructure.Factory;
-using Mirror;
 using Mirror.Examples.CharacterSelection;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,37 +11,29 @@ namespace _BallShooter._Scripts.UI
 {
     public class ColorSelectionController : MonoBehaviour
     {
+        public event Action OnColorConfirmed;
+        
         public ColorButtonsController colorSelector;
         public Button buttonExit, buttonGo;
         public Transform podiumPosition;
-
-        private int currentlySelectedCharacter = 1;
-        private CharacterData characterData;
+        
         private GameObject _currentInstantiatedCharacter;
         private ColorSelection _colorSelection;
-        public SceneReferencer sceneReferencer;
+        // public SceneReferencer sceneReferencer;
         private SceneLoader _sceneLoader;
         private IGameFactory _gameFactory;
+        private IStaticDataService _staticDataService;
 
-        public void Configure(SceneLoader sceneLoader, IGameFactory gameFactory)
+        public void Configure(IStaticDataService staticDataService)
         {
-            _sceneLoader = sceneLoader;
-            _gameFactory = gameFactory;
+            _staticDataService = staticDataService;
         }
 
         private void Start()
         {
-            characterData = CharacterData.characterDataSingleton;
-            if (characterData == null)
-            {
-                Debug.Log("Add CharacterData prefab singleton into the scene.");
-                return;
-            }
-
             buttonExit.onClick.AddListener(ButtonExit);
             buttonGo.onClick.AddListener(ButtonGo);
             colorSelector.OnColorSelected += ColorSelectorOnOnColorSelected;
-            LoadData();
             SetupCharacters();
         }
 
@@ -58,16 +50,18 @@ namespace _BallShooter._Scripts.UI
 
         private void ButtonGo()
         {
-            if (sceneReferencer && NetworkClient.active)
-            {
-                NetworkClient.localPlayer.GetComponent<CharacterSelection>()
-                    .CmdSetupCharacter(StaticVariables.characterColour);
-                sceneReferencer.CloseCharacterSelection();
-            }
-            else
-            {
-                _sceneLoader.Load(SceneNames.LobbyGame);
-            }
+            OnColorConfirmed?.Invoke();
+            // Move following logic to state class
+            // if (sceneReferencer && NetworkClient.active)
+            // {
+            //     NetworkClient.localPlayer.GetComponent<ColorSelection>()
+            //         .CmdSetupCharacter(StaticVariables.characterColour);
+            //     sceneReferencer.CloseCharacterSelection();
+            // }
+            // else
+            // {
+            //     _sceneLoader.Load(SceneNames.LobbyGame);
+            // }
         }
 
         private void SetupCharacters()
@@ -77,11 +71,10 @@ namespace _BallShooter._Scripts.UI
                 Destroy(_currentInstantiatedCharacter);
             }
 
-            _currentInstantiatedCharacter = Instantiate(characterData.characterPrefabs[currentlySelectedCharacter]);
+            _currentInstantiatedCharacter = Instantiate(_staticDataService.GameSettings.playerSettings.playerPrefab, transform.root, true);
             _currentInstantiatedCharacter.transform.position = podiumPosition.position;
             _currentInstantiatedCharacter.transform.rotation = podiumPosition.rotation;
             _colorSelection = _currentInstantiatedCharacter.GetComponent<ColorSelection>();
-            _currentInstantiatedCharacter.transform.SetParent(this.transform.root);
 
             SetupCharacterColours();
         }
@@ -91,20 +84,7 @@ namespace _BallShooter._Scripts.UI
             if (StaticVariables.characterColour != new Color(0, 0, 0, 0))
             {
                 _colorSelection.characterColour = StaticVariables.characterColour;
-                //_colorSelection.AssignColours();
-            }
-        }
-
-        private void LoadData()
-        {
-            if (StaticVariables.characterNumber > 0 &&
-                StaticVariables.characterNumber < characterData.characterPrefabs.Length)
-            {
-                currentlySelectedCharacter = StaticVariables.characterNumber;
-            }
-            else
-            {
-                StaticVariables.characterNumber = currentlySelectedCharacter;
+                _colorSelection.AssignColours();
             }
         }
     }

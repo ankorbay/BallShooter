@@ -23,7 +23,7 @@ namespace _BallShooter._Scripts.Player
             AssignColours();
         }
 
-        private void AssignColours()
+        public void AssignColours()
         {
             foreach (MeshRenderer meshRenderer in characterRenderers)
             {

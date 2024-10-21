@@ -6,9 +6,8 @@ namespace Infrastructure.Factory
 {
     public interface IGameFactory : IService
     {
-        public Task SpawnNetworkManager();
-        
-        public Task<ColorSelectionController> SpawnColorSelectionController();
+        void SpawnNetworkManager();
+        ColorSelectionController SpawnColorSelectionController();
         void CleanUp();
     }
 }

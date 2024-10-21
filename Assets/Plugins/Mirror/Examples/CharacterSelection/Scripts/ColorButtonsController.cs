@@ -29,6 +29,7 @@ namespace Mirror.Examples.CharacterSelection
             {
                 button.onClick.AddListener(() =>
                 {
+                    Debug.Log("Color selected: " + button.image.color);
                     OnColorSelected?.Invoke(button.image.color);
                 });
             }
