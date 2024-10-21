@@ -37,8 +37,9 @@ namespace Infrastructure.States
         
         private void RegisterServices()
         {
+            _services.RegisterSingle<IStaticDataService>(new StaticDataService());
+            _services.Single<IStaticDataService>().Load();
             _services.RegisterSingle<IAssetProvider>(new AssetProvider());
-            _services.RegisterSingle<IStaticDataService>(new StaticDataService().Load());
             _services.RegisterSingle<IGameFactory>(new GameFactory(_services.Single<IAssetProvider>(), _services.Single<IStaticDataService>()));
             Debug.Log("Services have been registered");
         }
