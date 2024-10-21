@@ -17,8 +17,9 @@ MonoBehaviour:
   shootingSettings:
     defaultForce: 1000
     minForceMultiplier: 0.5
-    maxForceMultiplier: 4
     forceChargingDuration: 3
+    ballLifeTime: 3
   movementSettings:
     speed: 3
     rotationSpeed: 3
+    moveXLimit: 14
