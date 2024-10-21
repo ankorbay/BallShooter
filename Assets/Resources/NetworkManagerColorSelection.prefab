@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 302155286589801024}
   - component: {fileID: 6021125936294984057}
+  - component: {fileID: -8049643273963523298}
   - component: {fileID: 5421055426014502165}
   m_Layer: 0
   m_Name: NetworkManagerColorSelection
@@ -81,6 +82,19 @@ MonoBehaviour:
   evaluationInterval: 3
   timeInterpolationGui: 0
   SpawnAsCharacter: 1
+--- !u!114 &-8049643273963523298
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 468697733716401478}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac04f8fd32f65b041935e3a5a96777e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  edgegapApiKey: token 8db9bddc-9185-43e7-9861-fb9a62d03acf
 --- !u!114 &5421055426014502165
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -116,5 +130,5 @@ MonoBehaviour:
   relayGUI: 0
   userId: 11111111
   sessionId: 22222222
-  lobbyUrl: https://21b4fbd3062502.edgegap.net
+  lobbyUrl: https://fb7b1bfbd14910.edgegap.net
   lobbyWaitTimeout: 60
