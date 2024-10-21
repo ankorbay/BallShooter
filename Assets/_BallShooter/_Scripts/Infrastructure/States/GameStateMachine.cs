@@ -19,7 +19,7 @@ namespace Infrastructure.States
             {
                 [typeof(BootstrapState)] = new BootstrapState(this, sceneLoader, loadingCurtain, services),
                 [typeof(ColorSelectState)] = new ColorSelectState(this, sceneLoader, loadingCurtain, services),
-                [typeof(GameState)] = new GameState(this, sceneLoader, loadingCurtain, services),
+                [typeof(GameLobbyState)] = new GameLobbyState(this, sceneLoader, loadingCurtain, services),
             };
             _loadingCurtain = loadingCurtain;
         }

@@ -38,7 +38,7 @@ namespace Infrastructure.States.Infrastructure.States
 
         private void OnColorConfirmed()
         {
-            _stateMachine.Enter<GameState>();
+            _stateMachine.Enter<GameLobbyState>();
         }
 
         public void Exit()
