@@ -1,20 +1,24 @@
+using System;
 using _BallShooter._Scripts.Infrastructure.Services;
 using _BallShooter._Scripts.Player;
 using Mirror;
 using Mirror.Examples.CharacterSelection;
 using UnityEngine;
+using UnityEngine.Serialization;
+using Random = UnityEngine.Random;
 
 namespace _BallShooter._Scripts.Network
 {
     [AddComponentMenu("")]
     public class NetworkManagerColorSelection : NetworkManager
     {
-        public bool SpawnAsCharacter = true;
+        public event Action OnClientStartedEvent;
+        
+        public bool spawnAsCharacter = true;
 
         public static new NetworkManagerColorSelection singleton => (NetworkManagerColorSelection)NetworkManager.singleton;
-        private CharacterData characterData;
 
-        public IStaticDataService _staticDataService;
+        private IStaticDataService _staticDataService;
         
         public void Configure(IStaticDataService staticDataService)
         {
@@ -23,7 +27,7 @@ namespace _BallShooter._Scripts.Network
 
         public struct CreateCharacterMessage : NetworkMessage
         {
-            public Color characterColour;
+            public Color CharacterColour;
         }
 
         public struct ReplaceCharacterMessage : NetworkMessage
@@ -41,14 +45,15 @@ namespace _BallShooter._Scripts.Network
 
         public override void OnClientConnect()
         {
+            OnClientStartedEvent?.Invoke();
             base.OnClientConnect();
 
-            if (SpawnAsCharacter)
+            if (spawnAsCharacter)
             {
                 // you can send the message here, or wherever else you want
                 CreateCharacterMessage characterMessage = new CreateCharacterMessage
                 {
-                    characterColour = StaticVariables.characterColour
+                    CharacterColour = StaticVariables.characterColour
                 };
 
                 NetworkClient.Send(characterMessage);
@@ -60,10 +65,10 @@ namespace _BallShooter._Scripts.Network
             Transform startPos = GetStartPosition();
             
             // check if the save data has been pre-set
-            if (message.characterColour == new Color(0, 0, 0, 0))
+            if (message.CharacterColour == new Color(0, 0, 0, 0))
             {
                 Debug.Log("OnCreateCharacter colour invalid or not set, use random.");
-                message.characterColour = Random.ColorHSV(0f, 1f, 1f, 1f, 0f, 1f);
+                message.CharacterColour = Random.ColorHSV(0f, 1f, 1f, 1f, 0f, 1f);
             }
 
             GameObject playerObject = startPos != null
@@ -74,7 +79,7 @@ namespace _BallShooter._Scripts.Network
             // Apply data from the message however appropriate for your game
             // Typically Player would be a component you write with syncvars or properties
             ColorSelection characterSelection = playerObject.GetComponent<ColorSelection>();
-            characterSelection.characterColour = message.characterColour;
+            characterSelection.characterColour = message.CharacterColour;
 
             // call this to use this gameobject as the primary controller
             NetworkServer.AddPlayerForConnection(conn, playerObject);
@@ -95,7 +100,7 @@ namespace _BallShooter._Scripts.Network
             // Apply data from the message however appropriate for your game
             // Typically Player would be a component you write with syncvars or properties
             ColorSelection characterSelection = playerObject.GetComponent<ColorSelection>();
-            characterSelection.characterColour = message.createCharacterMessage.characterColour;
+            characterSelection.characterColour = message.createCharacterMessage.CharacterColour;
 
             // Remove the previous player object that's now been replaced
             // Delay is required to allow replacement to complete.
