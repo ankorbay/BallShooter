@@ -170,6 +170,7 @@ public class GatesController : NetworkBehaviour
     [Command]
     void CmdFire(float force)
     {
+        // TODO refactor to get balls from object pool
         BallBullet bullet = Instantiate(projectilePrefab, projectileMount.position, projectileMount.rotation).GetComponent<BallBullet>();
         bullet.Initialize(this);
         bullet.rigidBody.AddForce(projectileMount.forward * force);

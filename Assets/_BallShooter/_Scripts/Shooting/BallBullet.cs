@@ -16,6 +16,7 @@ public class BallBullet : NetworkBehaviour
     }
     public override void OnStartServer()
     {
+        // TODO refactor to return to object pool
         Invoke(nameof(DestroySelf), AllServices.Container.Single<IStaticDataService>().GameSettings.shootingSettings.ballLifeTime);
     }
     
