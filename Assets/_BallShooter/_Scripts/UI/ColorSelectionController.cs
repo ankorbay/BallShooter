@@ -19,7 +19,6 @@ namespace _BallShooter._Scripts.UI
         
         private GameObject _currentInstantiatedCharacter;
         private ColorSelection _colorSelection;
-        // public SceneReferencer sceneReferencer;
         private SceneLoader _sceneLoader;
         private IGameFactory _gameFactory;
         private IStaticDataService _staticDataService;
@@ -29,12 +28,23 @@ namespace _BallShooter._Scripts.UI
             _staticDataService = staticDataService;
         }
 
-        private void Start()
+        private void OnEnable()
         {
             buttonExit.onClick.AddListener(ButtonExit);
             buttonGo.onClick.AddListener(ButtonGo);
             colorSelector.OnColorSelected += ColorSelectorOnOnColorSelected;
+        }
+
+        private void Start()
+        {
             SetupCharacters();
+        }
+
+        private void OnDisable()
+        {
+            buttonExit.onClick.RemoveListener(ButtonExit);
+            buttonGo.onClick.RemoveListener(ButtonGo);
+            colorSelector.OnColorSelected -= ColorSelectorOnOnColorSelected;
         }
 
         private void ColorSelectorOnOnColorSelected(Color color)
@@ -51,17 +61,6 @@ namespace _BallShooter._Scripts.UI
         private void ButtonGo()
         {
             OnColorConfirmed?.Invoke();
-            // Move following logic to state class
-            // if (sceneReferencer && NetworkClient.active)
-            // {
-            //     NetworkClient.localPlayer.GetComponent<ColorSelection>()
-            //         .CmdSetupCharacter(StaticVariables.characterColour);
-            //     sceneReferencer.CloseCharacterSelection();
-            // }
-            // else
-            // {
-            //     _sceneLoader.Load(SceneNames.LobbyGame);
-            // }
         }
 
         private void SetupCharacters()
