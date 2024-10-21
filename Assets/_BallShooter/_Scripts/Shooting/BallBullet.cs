@@ -1,3 +1,5 @@
+using _BallShooter._Scripts.Infrastructure.Services;
+using Infrastructure.Services;
 using Mirror;
 using UnityEngine;
 
@@ -14,7 +16,7 @@ public class BallBullet : NetworkBehaviour
     }
     public override void OnStartServer()
     {
-        Invoke(nameof(DestroySelf), destroyAfter);
+        Invoke(nameof(DestroySelf), AllServices.Container.Single<IStaticDataService>().GameSettings.shootingSettings.ballLifeTime);
     }
     
     [Server]
