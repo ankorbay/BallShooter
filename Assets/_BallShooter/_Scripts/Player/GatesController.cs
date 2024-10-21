@@ -1,4 +1,7 @@
 using System;
+using _BallShooter._Scripts.Infrastructure.Data;
+using _BallShooter._Scripts.Infrastructure.Services;
+using Infrastructure.Services;
 using Mirror;
 using StarterAssets;
 using TMPro;
@@ -21,14 +24,12 @@ public class GatesController : NetworkBehaviour
     public float movementSpeed = 3;
 
     [Tooltip("Rotation speed of the character")]
-    public float RotationSpeed = 1.0f;
+    public float rotationSpeed = 1.0f;
     
     [Header("Firing")]
     public GameObject projectilePrefab;
     public Transform  projectileMount;
-    public float fullChargeDuration = 3f;
-    public float baseBulletSpeed = 1000f;
-
+    
     [Header("Cinemachine")]
     [Tooltip("The follow target set in the Cinemachine Virtual Camera that the camera will follow")]
     public GameObject CinemachineCameraTarget;
@@ -45,12 +46,15 @@ public class GatesController : NetworkBehaviour
     private PlayerInput _playerInput;
 #endif
     private StarterAssetsInputs _input;
+    private float _moveDistance;
     private float _rotationVelocityX;
     private float _rotationVelocityY;
     private bool _isCharging;
     private float _bulletChargeValue;
     private float _currentForce;
     private Material _cachedMaterial;
+    private ShootingSettings _shootingSettings;
+    private MovementSettings _movementSettings;
 
     private bool IsCurrentDeviceMouse
     {
@@ -76,6 +80,10 @@ public class GatesController : NetworkBehaviour
 
     private void Awake()
     {
+        GameSettings gameSettings = AllServices.Container.Single<IStaticDataService>().GameSettings;
+        _shootingSettings = gameSettings.shootingSettings;
+        _movementSettings = gameSettings.movementSettings;
+
         _input = GetComponent<StarterAssetsInputs>();
 #if ENABLE_INPUT_SYSTEM
         _playerInput = GetComponent<PlayerInput>();
@@ -86,10 +94,14 @@ public class GatesController : NetworkBehaviour
 
     void Update()
     {
-        if(!Application.isFocused || !isLocalPlayer) return; 
-        
-        transform.Translate(_input.move.x * movementSpeed * Time.deltaTime, 0f, 0f);
-        
+        if(!Application.isFocused || !isLocalPlayer) return;
+
+        MovePlayer();
+        ProcessShooting();
+    }
+
+    private void ProcessShooting()
+    {
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
             StartCharging();
@@ -101,6 +113,23 @@ public class GatesController : NetworkBehaviour
         else if (Mouse.current.leftButton.wasReleasedThisFrame)
         {
             Fire();
+        }
+    }
+
+    private void MovePlayer()
+    {
+        _moveDistance += _input.move.x * _movementSettings.speed * Time.deltaTime;
+        if (Mathf.Abs(_moveDistance) < _movementSettings.moveXLimit)
+        {
+            transform.Translate(_input.move.x * _movementSettings.speed * Time.deltaTime, 0f, 0f);
+        }
+        else if (_moveDistance > 0)
+        {
+            _moveDistance = _movementSettings.moveXLimit;
+        }
+        else
+        {
+            _moveDistance = -_movementSettings.moveXLimit;
         }
     }
 
@@ -116,7 +145,7 @@ public class GatesController : NetworkBehaviour
         if (_isCharging)
         {
             _bulletChargeValue += Time.deltaTime;
-            _bulletChargeValue = Mathf.Clamp(_bulletChargeValue, 0.5f, fullChargeDuration); // Clamp to max force
+            _bulletChargeValue = Mathf.Clamp(_bulletChargeValue, _shootingSettings.minForceMultiplier, _shootingSettings.forceChargingDuration); // Clamp to max force
         }
     }
     private void Fire()
@@ -125,7 +154,7 @@ public class GatesController : NetworkBehaviour
         if (_isCharging)
         {
             _isCharging = false;
-            _currentForce = baseBulletSpeed * _bulletChargeValue;
+            _currentForce = _shootingSettings.defaultForce * _bulletChargeValue;
             CmdFire(_currentForce);
             _bulletChargeValue = 0f;
             _currentForce = 0f;
@@ -153,8 +182,8 @@ public class GatesController : NetworkBehaviour
         {
             float deltaTimeMultiplier = IsCurrentDeviceMouse ? 1.0f : Time.deltaTime;
             
-            _rotationVelocityX = _input.look.x * RotationSpeed * deltaTimeMultiplier;
-            _rotationVelocityY = _input.look.y * RotationSpeed * deltaTimeMultiplier;
+            _rotationVelocityX = _input.look.x * _movementSettings.rotationSpeed * deltaTimeMultiplier;
+            _rotationVelocityY = _input.look.y * _movementSettings.rotationSpeed * deltaTimeMultiplier;
             
             turret.Rotate(Vector3.up * _rotationVelocityX + Vector3.right * _rotationVelocityY);
             turret.localRotation = Quaternion.Euler(turret.localRotation.eulerAngles.x, turret.localRotation.eulerAngles.y, 0);
