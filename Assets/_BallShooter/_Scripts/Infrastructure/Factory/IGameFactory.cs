@@ -1,6 +1,8 @@
 ﻿using System.Threading.Tasks;
+using _BallShooter._Scripts.Network;
 using _BallShooter._Scripts.UI;
 using Services;
+using UnityEngine;
 
 namespace Infrastructure.Factory
 {
@@ -9,5 +11,7 @@ namespace Infrastructure.Factory
         void SpawnNetworkManager();
         ColorSelectionController SpawnColorSelectionController();
         void CleanUp();
+        LobbyGameUIController SpawnLobbyGameUIController();
+        GameObject SpawnEnvironment();
     }
 }

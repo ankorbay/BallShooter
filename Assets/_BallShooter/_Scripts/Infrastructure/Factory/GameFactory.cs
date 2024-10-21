@@ -1,11 +1,7 @@
-using System.Threading.Tasks;
 using _BallShooter._Scripts.Infrastructure.Data;
 using _BallShooter._Scripts.Infrastructure.Services;
 using _BallShooter._Scripts.Network;
 using _BallShooter._Scripts.UI;
-using Infrastructure.Services;
-using Infrastructure.States;
-using Logic;
 using Services;
 using UnityEngine;
 
@@ -15,6 +11,11 @@ namespace Infrastructure.Factory
     {
         private readonly IAssetProvider _assets;
         private readonly IStaticDataService _staticDataService;
+
+        private ColorSelectionController _colorSelectionController;
+        private GameObject _lobbyUI;
+        private GameObject _environment;
+        private LobbyGameUIController _lobbyGameUIController;
 
         public GameFactory(IAssetProvider assetProvider, IStaticDataService staticDataService)
         {
@@ -32,14 +33,28 @@ namespace Infrastructure.Factory
         public ColorSelectionController SpawnColorSelectionController()
         {
             GameObject colorSelectionPrefab = _assets.Instantiate(AssetAddress.ColorSelectionUI);
-            ColorSelectionController colorSelectionController = colorSelectionPrefab.GetComponent<ColorSelectionController>();
-            colorSelectionController.Configure(_staticDataService);
-            return colorSelectionController;
+            _colorSelectionController = colorSelectionPrefab.GetComponent<ColorSelectionController>();
+            _colorSelectionController.Configure(_staticDataService);
+            return _colorSelectionController;
         }
 
+        public GameObject SpawnEnvironment()
+        {
+            _environment = _assets.Instantiate(AssetAddress.Environment);
+            return _environment;
+        }
+        
         public void CleanUp()
         {
             _assets.CleanUp();
         }
+
+        public LobbyGameUIController SpawnLobbyGameUIController()
+        {
+            _lobbyGameUIController = _assets.Instantiate(AssetAddress.LobbyGameUIController).GetComponent<LobbyGameUIController>();
+            _lobbyGameUIController.Configure(_colorSelectionController.gameObject, _environment);
+            return _lobbyGameUIController;
+        }
+        
     }
 }
