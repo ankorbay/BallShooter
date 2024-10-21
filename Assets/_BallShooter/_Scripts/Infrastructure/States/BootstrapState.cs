@@ -1,6 +1,10 @@
 ﻿using _BallShooter._Scripts.Infrastructure;
+using _BallShooter._Scripts.Infrastructure.Services;
 using Infrastructure.Services;
+using Infrastructure.States.Infrastructure.States;
 using Logic;
+using Services;
+using Unity.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -8,8 +12,6 @@ namespace Infrastructure.States
 {
     public class BootstrapState : IState
     {
-        private const string Initial = "Initial";
-
         private readonly GameStateMachine _stateMachine;
         private readonly SceneLoader _sceneLoader;
         private readonly AllServices _services;
@@ -26,12 +28,7 @@ namespace Infrastructure.States
         }
         public void Enter()
         {
-            _sceneLoader.Load(Initial, onLoaded: OnSceneLoaded);
-        }
-
-        private void OnSceneLoaded()
-        {
-            Debug.Log($"Scene {SceneNames.Initial} has been loaded");
+            _stateMachine.Enter<ColorSelectState>();
         }
 
         public void Exit()
@@ -41,7 +38,9 @@ namespace Infrastructure.States
         
         private void RegisterServices()
         {
-            // Add your services initialization points here
+            _services.RegisterSingle<IAssetProvider>(new AssetProvider());
+            _services.RegisterSingle<IStaticDataService>(new StaticDataService(_services.Single<IAssetProvider>()));
+           Debug.Log("Services have been registered");
         }
     }
     

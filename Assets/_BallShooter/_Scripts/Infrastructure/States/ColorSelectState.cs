@@ -1,4 +1,5 @@
-﻿using Infrastructure.Services;
+﻿using Infrastructure.Factory;
+using Infrastructure.Services;
 using Logic;
 using UnityEngine;
 
@@ -27,19 +28,13 @@ namespace Infrastructure.States.Infrastructure.States
 
         private void OnSceneLoaded()
         {
-            Debug.Log("Scene has been loaded");
+            Debug.Log($"Scene {ColorSelectScene} has been loaded");
+            _services.Single<IGameFactory>().SpawnNetworkManager();
+            // _services.Single<IGameFactory>().SpawnColorSelectionUI();
         }
 
         public void Exit()
         {
-            _loadingCurtain.Show();
         }
-        
-        private void RegisterServices()
-        {
-            // Add your services initialization points here
-        }
-
-
     }
 }

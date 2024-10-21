@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6021125936294984057}
   - component: {fileID: 5421055426014502165}
   m_Layer: 0
-  m_Name: NetworkManagerCharacterSelection
+  m_Name: NetworkManagerColorSelection
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -42,13 +42,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 468697733716401478}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 98c582433a349434990d734c5586d722, type: 3}
+  m_Script: {fileID: 11500000, guid: b767195cd8824f59a6770f39efcf293d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   dontDestroyOnLoad: 1
   runInBackground: 1
   headlessStartMode: 1
-  editorAutoStart: 1
+  editorAutoStart: 0
   sendRate: 60
   offlineScene: 
   onlineScene: 

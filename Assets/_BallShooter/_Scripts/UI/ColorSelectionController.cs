@@ -1,28 +1,34 @@
+using _BallShooter._Scripts.Infrastructure;
+using _BallShooter._Scripts.Player;
+using Infrastructure;
+using Infrastructure.Factory;
+using Mirror;
+using Mirror.Examples.CharacterSelection;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-
-namespace Mirror.Examples.CharacterSelection
-{ 
-    public class CanvasReferencer : MonoBehaviour
+namespace _BallShooter._Scripts.UI
+{
+    public class ColorSelectionController : MonoBehaviour
     {
-        // Make sure to attach these Buttons in the Inspector
         public ColorButtonsController colorSelector;
         public Button buttonExit, buttonGo;
         public Transform podiumPosition;
-        
+
         private int currentlySelectedCharacter = 1;
         private CharacterData characterData;
         private GameObject _currentInstantiatedCharacter;
-        private CharacterSelection characterSelection;
+        private ColorSelection _colorSelection;
         public SceneReferencer sceneReferencer;
+        private SceneLoader _sceneLoader;
+        private IGameFactory _gameFactory;
 
-        
-        public void Configure()
+        public void Configure(SceneLoader sceneLoader, IGameFactory gameFactory)
         {
-            // this is a placeholder for the future
+            _sceneLoader = sceneLoader;
+            _gameFactory = gameFactory;
         }
+
         private void Start()
         {
             characterData = CharacterData.characterDataSingleton;
@@ -45,21 +51,22 @@ namespace Mirror.Examples.CharacterSelection
             SetupCharacterColours();
         }
 
-        public void ButtonExit()
+        private void ButtonExit()
         {
             Application.Quit();
         }
 
-        public void ButtonGo()
+        private void ButtonGo()
         {
             if (sceneReferencer && NetworkClient.active)
             {
-                NetworkClient.localPlayer.GetComponent<CharacterSelection>().CmdSetupCharacter(StaticVariables.characterColour);
+                NetworkClient.localPlayer.GetComponent<CharacterSelection>()
+                    .CmdSetupCharacter(StaticVariables.characterColour);
                 sceneReferencer.CloseCharacterSelection();
             }
             else
             {
-                SceneManager.LoadScene("LobbyGame");
+                _sceneLoader.Load(SceneNames.LobbyGame);
             }
         }
 
@@ -69,28 +76,29 @@ namespace Mirror.Examples.CharacterSelection
             {
                 Destroy(_currentInstantiatedCharacter);
             }
+
             _currentInstantiatedCharacter = Instantiate(characterData.characterPrefabs[currentlySelectedCharacter]);
             _currentInstantiatedCharacter.transform.position = podiumPosition.position;
             _currentInstantiatedCharacter.transform.rotation = podiumPosition.rotation;
-            characterSelection = _currentInstantiatedCharacter.GetComponent<CharacterSelection>();
+            _colorSelection = _currentInstantiatedCharacter.GetComponent<ColorSelection>();
             _currentInstantiatedCharacter.transform.SetParent(this.transform.root);
 
             SetupCharacterColours();
         }
 
-        public void SetupCharacterColours()
+        private void SetupCharacterColours()
         {
-           // Debug.Log("SetupCharacterColours");
             if (StaticVariables.characterColour != new Color(0, 0, 0, 0))
             {
-                characterSelection.characterColour = StaticVariables.characterColour;
-                characterSelection.AssignColours();
+                _colorSelection.characterColour = StaticVariables.characterColour;
+                //_colorSelection.AssignColours();
             }
         }
 
         private void LoadData()
         {
-            if (StaticVariables.characterNumber > 0 && StaticVariables.characterNumber < characterData.characterPrefabs.Length)
+            if (StaticVariables.characterNumber > 0 &&
+                StaticVariables.characterNumber < characterData.characterPrefabs.Length)
             {
                 currentlySelectedCharacter = StaticVariables.characterNumber;
             }

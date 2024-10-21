@@ -1,28 +1,24 @@
+using _BallShooter._Scripts.Infrastructure.Services;
+using _BallShooter._Scripts.Player;
+using Mirror;
+using Mirror.Examples.CharacterSelection;
 using UnityEngine;
 
-namespace Mirror.Examples.CharacterSelection
+namespace _BallShooter._Scripts.Network
 {
     [AddComponentMenu("")]
-    public class NetworkManagerCharacterSelection : NetworkManager
+    public class NetworkManagerColorSelection : NetworkManager
     {
-        // See the scene 'SceneMapSpawnWithNoCharacter', to spawn as empty player.
-        // 'SceneMap' will auto spawn as random player character.
-        // Compare Network Manager inspector setups to see the difference between the two.
-        // Either of these allow selecting character after spawning in too.
         public bool SpawnAsCharacter = true;
 
-        public static new NetworkManagerCharacterSelection singleton => (NetworkManagerCharacterSelection)NetworkManager.singleton;
+        public static new NetworkManagerColorSelection singleton => (NetworkManagerColorSelection)NetworkManager.singleton;
         private CharacterData characterData;
 
-        public override void Start()
+        public IStaticDataService _staticDataService;
+        
+        public void Configure(IStaticDataService staticDataService)
         {
-            characterData = CharacterData.characterDataSingleton;
-            if (characterData == null)
-            {
-                Debug.Log("Add CharacterData prefab singleton into the scene.");
-                return;
-            }
-            base.Awake();
+            _staticDataService = staticDataService;
         }
 
         public struct CreateCharacterMessage : NetworkMessage
@@ -71,13 +67,13 @@ namespace Mirror.Examples.CharacterSelection
             }
 
             GameObject playerObject = startPos != null
-                ? Instantiate(characterData.characterPrefabs[0], startPos.position, startPos.rotation)
-                : Instantiate(characterData.characterPrefabs[0]);
+                ? Instantiate(_staticDataService.GameSettings.playerSettings.playerPrefab, startPos.position, startPos.rotation)
+                : Instantiate(_staticDataService.GameSettings.playerSettings.playerPrefab);
 
 
             // Apply data from the message however appropriate for your game
             // Typically Player would be a component you write with syncvars or properties
-            CharacterSelection characterSelection = playerObject.GetComponent<CharacterSelection>();
+            ColorSelection characterSelection = playerObject.GetComponent<ColorSelection>();
             characterSelection.characterColour = message.characterColour;
 
             // call this to use this gameobject as the primary controller
@@ -91,14 +87,14 @@ namespace Mirror.Examples.CharacterSelection
             // Cache a reference to the current player object
             GameObject oldPlayer = conn.identity.gameObject;
 
-            GameObject playerObject = Instantiate(characterData.characterPrefabs[0], startPos.position, startPos.rotation);
+            GameObject playerObject = Instantiate(_staticDataService.GameSettings.playerSettings.playerPrefab, startPos.position, startPos.rotation);
 
             // Instantiate the new player object and broadcast to clients
             NetworkServer.ReplacePlayerForConnection(conn, playerObject, ReplacePlayerOptions.KeepActive);
 
             // Apply data from the message however appropriate for your game
             // Typically Player would be a component you write with syncvars or properties
-            CharacterSelection characterSelection = playerObject.GetComponent<CharacterSelection>();
+            ColorSelection characterSelection = playerObject.GetComponent<ColorSelection>();
             characterSelection.characterColour = message.createCharacterMessage.characterColour;
 
             // Remove the previous player object that's now been replaced
