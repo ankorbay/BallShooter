@@ -1,4 +1,5 @@
 using _BallShooter._Scripts.Infrastructure.Services;
+using _BallShooter._Scripts.ObjectPool;
 using Infrastructure.Services;
 using Mirror;
 using UnityEngine;
@@ -9,21 +10,22 @@ public class BallBullet : NetworkBehaviour
     public Rigidbody rigidBody;
 
     private GatesController _shooter;
+    private PrefabPoolManager _pool;
 
-    public void Initialize(GatesController shooter)
+    public void Initialize(GatesController shooter, PrefabPoolManager pool)
     {
         _shooter = shooter;
+        _pool = pool;
     }
-    public override void OnStartServer()
+    public void OnEnable()
     {
-        // TODO refactor to return to object pool
-        Invoke(nameof(DestroySelf), AllServices.Container.Single<IStaticDataService>().GameSettings.shootingSettings.ballLifeTime);
+        Invoke(nameof(ReturnToPool), AllServices.Container.Single<IStaticDataService>().GameSettings.shootingSettings.ballLifeTime);
     }
     
     [Server]
-    void DestroySelf()
+    void ReturnToPool()
     {
-        NetworkServer.Destroy(gameObject);
+        _pool.PutBackInPool(gameObject);
     }
 
     [ServerCallback]
@@ -44,7 +46,7 @@ public class BallBullet : NetworkBehaviour
                 Debug.Log("Shooter hit their own gates. No points awarded.");
             }
             
-            DestroySelf();
+            ReturnToPool();
         }
     }
 }

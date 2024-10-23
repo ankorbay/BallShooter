@@ -1,6 +1,8 @@
 using System;
 using _BallShooter._Scripts.Infrastructure.Data;
 using _BallShooter._Scripts.Infrastructure.Services;
+using _BallShooter._Scripts.ObjectPool;
+using Infrastructure.Factory;
 using Infrastructure.Services;
 using Mirror;
 using StarterAssets;
@@ -19,12 +21,6 @@ public class GatesController : NetworkBehaviour
     public Transform turret;
 
     public TextMeshProUGUI pointsText;
-
-    [Header("Movement")]
-    public float movementSpeed = 3;
-
-    [Tooltip("Rotation speed of the character")]
-    public float rotationSpeed = 1.0f;
     
     [Header("Firing")]
     public GameObject projectilePrefab;
@@ -55,6 +51,7 @@ public class GatesController : NetworkBehaviour
     private Material _cachedMaterial;
     private ShootingSettings _shootingSettings;
     private MovementSettings _movementSettings;
+    private PrefabPoolManager _bulletPool;
 
     private bool IsCurrentDeviceMouse
     {
@@ -72,6 +69,7 @@ public class GatesController : NetworkBehaviour
     {
         enabled = true;
         mainCameraTransform.gameObject.SetActive(true);
+        _bulletPool = AllServices.Container.Single<IGameFactory>().GetPrefabPoolManager();
         _input.enabled = true;
 #if ENABLE_INPUT_SYSTEM
         _playerInput.enabled = true;
@@ -92,7 +90,7 @@ public class GatesController : NetworkBehaviour
 #endif
     }
 
-    void Update()
+    private void Update()
     {
         if(!Application.isFocused || !isLocalPlayer) return;
 
@@ -171,10 +169,14 @@ public class GatesController : NetworkBehaviour
     void CmdFire(float force)
     {
         // TODO refactor to get balls from object pool
-        BallBullet bullet = Instantiate(projectilePrefab, projectileMount.position, projectileMount.rotation).GetComponent<BallBullet>();
-        bullet.Initialize(this);
+        if(_bulletPool == null)
+            _bulletPool = AllServices.Container.Single<IGameFactory>().GetPrefabPoolManager();
+        BallBullet bullet = _bulletPool.GetFromPool(projectileMount.position,projectileMount.rotation).GetComponent<BallBullet>();
+        bullet.Initialize(this, _bulletPool);
+        bullet.rigidBody.ResetInertiaTensor();
         bullet.rigidBody.AddForce(projectileMount.forward * force);
-        NetworkServer.Spawn(bullet.gameObject);
+        if(bullet.netId == 0)
+            NetworkServer.Spawn(bullet.gameObject);
     }
 
     private void GunRotation()

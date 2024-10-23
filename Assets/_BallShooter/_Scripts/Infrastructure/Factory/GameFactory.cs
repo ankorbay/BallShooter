@@ -1,6 +1,7 @@
 using _BallShooter._Scripts.Infrastructure.Data;
 using _BallShooter._Scripts.Infrastructure.Services;
 using _BallShooter._Scripts.Network;
+using _BallShooter._Scripts.ObjectPool;
 using _BallShooter._Scripts.UI;
 using Services;
 using UnityEngine;
@@ -16,11 +17,22 @@ namespace Infrastructure.Factory
         private GameObject _lobbyUI;
         private GameObject _environment;
         private LobbyGameUIController _lobbyGameUIController;
+        private PrefabPoolManager _prefabPoolManager;
 
         public GameFactory(IAssetProvider assetProvider, IStaticDataService staticDataService)
         {
             _assets = assetProvider;
             _staticDataService = staticDataService;
+        }
+
+        public PrefabPoolManager GetPrefabPoolManager()
+        {
+            if (_prefabPoolManager == null)
+            {
+                SpawnPrefabPoolManager();
+            }
+            
+            return _prefabPoolManager;
         }
 
         public void SpawnNetworkManager()
@@ -47,6 +59,13 @@ namespace Infrastructure.Factory
         public void CleanUp()
         {
             _assets.CleanUp();
+        }
+        
+        public PrefabPoolManager SpawnPrefabPoolManager()
+        {
+            GameObject prefabPoolManagerPrefab = _assets.Instantiate(AssetAddress.PrefabPoolManager);
+            _prefabPoolManager = prefabPoolManagerPrefab.GetComponent<PrefabPoolManager>();
+            return _prefabPoolManager;
         }
 
         public LobbyGameUIController SpawnLobbyGameUIController()

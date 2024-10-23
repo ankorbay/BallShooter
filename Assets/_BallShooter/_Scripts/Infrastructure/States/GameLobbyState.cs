@@ -4,9 +4,7 @@ using _BallShooter._Scripts.UI;
 using Infrastructure.Factory;
 using Infrastructure.Services;
 using Logic;
-using Mirror;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace Infrastructure.States
 {
@@ -60,6 +58,7 @@ namespace Infrastructure.States
 
         private void PrepareScene()
         {
+            _gameFactory.SpawnPrefabPoolManager();
             _environment = _gameFactory.SpawnEnvironment();
             _environment.SetActive(false);
             _colorSelectionController = _gameFactory.SpawnColorSelectionController();
