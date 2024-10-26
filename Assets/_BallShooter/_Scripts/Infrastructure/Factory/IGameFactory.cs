@@ -9,11 +9,9 @@ namespace Infrastructure.Factory
 {
     public interface IGameFactory : IService
     {
-        public PrefabPoolManager GetPrefabPoolManager();
-        
         void SpawnNetworkManager();
         ColorSelectionController SpawnColorSelectionController();
-        PrefabPoolManager SpawnPrefabPoolManager();
+        PrefabPool GetSpawnBallPool();
         void CleanUp();
         LobbyGameUIController SpawnLobbyGameUIController();
         GameObject SpawnEnvironment();

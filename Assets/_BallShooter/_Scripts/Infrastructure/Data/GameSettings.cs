@@ -28,6 +28,7 @@ namespace _BallShooter._Scripts.Infrastructure.Data
     [Serializable]
     public class ShootingSettings
     {
+        public GameObject ballPrefab;
         [Tooltip("The default force that will be applied to the ball when it is shot. Recommended value to start: 1000.")]
         public float defaultForce;
         [Tooltip("The minimum force multiplier that will be applied to the ball when it is shot. This is used to prevent the ball from being shot with a force of 0. E.g. if defaultForce is 1000 and minForceMultiplier is 0.5, the ball will be added a force of 500 when shot happens.")]

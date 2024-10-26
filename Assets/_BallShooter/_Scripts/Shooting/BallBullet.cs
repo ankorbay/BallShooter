@@ -10,25 +10,27 @@ public class BallBullet : NetworkBehaviour
     public Rigidbody rigidBody;
 
     private GatesController _shooter;
-    private PrefabPoolManager _pool;
+    private PrefabPool _ballPool;
 
-    public void Initialize(GatesController shooter, PrefabPoolManager pool)
+    public void Initialize(GatesController shooter, PrefabPool prefabPool)
     {
         _shooter = shooter;
-        _pool = pool;
+        _ballPool = prefabPool;
     }
+
     public void OnEnable()
     {
-        Invoke(nameof(ReturnToPool), AllServices.Container.Single<IStaticDataService>().GameSettings.shootingSettings.ballLifeTime);
+        float lifeTime = AllServices.Container.Single<IStaticDataService>().GameSettings.shootingSettings.ballLifeTime;
+        Invoke(nameof(DestroySelf), lifeTime > 0.01f ? lifeTime : destroyAfter);
     }
     
     [Server]
-    void ReturnToPool()
+    void DestroySelf()
     {
-        _pool.PutBackInPool(gameObject);
+        NetworkServer.UnSpawn(gameObject);
+        _ballPool.Return(gameObject);
     }
-
-    [ServerCallback]
+    
     void OnTriggerEnter(Collider other)
     {
         Debug.Log("Hit: " + other.name);
@@ -46,7 +48,7 @@ public class BallBullet : NetworkBehaviour
                 Debug.Log("Shooter hit their own gates. No points awarded.");
             }
             
-            ReturnToPool();
+            DestroySelf();
         }
     }
 }

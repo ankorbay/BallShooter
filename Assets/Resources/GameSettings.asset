@@ -15,6 +15,7 @@ MonoBehaviour:
   playerSettings:
     playerPrefab: {fileID: 7612555456923176313, guid: 5a96a240a4d43d54a83612da00ca67a7, type: 3}
   shootingSettings:
+    ballPrefab: {fileID: 3939471465383996869, guid: a069996bf2a4cda488287252a9ea787d, type: 3}
     defaultForce: 1000
     minForceMultiplier: 0.5
     forceChargingDuration: 3

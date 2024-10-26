@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using _BallShooter._Scripts.Infrastructure.Services;
+using _BallShooter._Scripts.ObjectPool;
 using _BallShooter._Scripts.Player;
 using Mirror;
 using Mirror.Examples.CharacterSelection;
@@ -35,12 +37,28 @@ namespace _BallShooter._Scripts.Network
             public CreateCharacterMessage createCharacterMessage;
         }
 
+        public struct BulletMessage : NetworkMessage
+        {
+            public Vector3 position; // Bullet position
+            public Quaternion rotation; // Bullet rotation
+            public Vector3 velocity; // Bullet velocity
+            public uint networkId; // Network ID of the bullet
+            public bool isActive; // Active state
+        }
+
         public override void OnStartServer()
         {
             base.OnStartServer();
 
             NetworkServer.RegisterHandler<CreateCharacterMessage>(OnCreateCharacter);
             NetworkServer.RegisterHandler<ReplaceCharacterMessage>(OnReplaceCharacterMessage);
+        }
+
+        public override void OnServerAddPlayer(NetworkConnectionToClient conn)
+        {
+            base.OnServerAddPlayer(conn);
+            
+            Debug.Log("Client connected, send some message here", this);
         }
 
         public override void OnClientConnect()
@@ -55,7 +73,8 @@ namespace _BallShooter._Scripts.Network
                 {
                     CharacterColour = StaticVariables.characterColour
                 };
-
+                
+                Debug.Log("Sending CreateCharacterMessage", this);
                 NetworkClient.Send(characterMessage);
             }
         }

@@ -58,7 +58,7 @@ namespace Infrastructure.States
 
         private void PrepareScene()
         {
-            _gameFactory.SpawnPrefabPoolManager();
+            _gameFactory.GetSpawnBallPool();
             _environment = _gameFactory.SpawnEnvironment();
             _environment.SetActive(false);
             _colorSelectionController = _gameFactory.SpawnColorSelectionController();

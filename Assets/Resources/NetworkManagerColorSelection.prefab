@@ -65,7 +65,6 @@ MonoBehaviour:
   playerSpawnMethod: 1
   spawnPrefabs:
   - {fileID: 7612555456923176313, guid: 5a96a240a4d43d54a83612da00ca67a7, type: 3}
-  - {fileID: 3939471465383996869, guid: a069996bf2a4cda488287252a9ea787d, type: 3}
   exceptionsDisconnect: 1
   snapshotSettings:
     bufferTimeMultiplier: 2
@@ -81,7 +80,7 @@ MonoBehaviour:
   evaluationMethod: 0
   evaluationInterval: 3
   timeInterpolationGui: 0
-  SpawnAsCharacter: 1
+  spawnAsCharacter: 1
 --- !u!114 &-8049643273963523298
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -130,5 +129,5 @@ MonoBehaviour:
   relayGUI: 0
   userId: 11111111
   sessionId: 22222222
-  lobbyUrl: https://fb7b1bfbd14910.edgegap.net
+  lobbyUrl: https://143fea7ef25d45.edgegap.net
   lobbyWaitTimeout: 60

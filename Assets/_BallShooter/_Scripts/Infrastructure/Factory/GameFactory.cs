@@ -17,22 +17,12 @@ namespace Infrastructure.Factory
         private GameObject _lobbyUI;
         private GameObject _environment;
         private LobbyGameUIController _lobbyGameUIController;
-        private PrefabPoolManager _prefabPoolManager;
+        private PrefabPool _prefabPoolManager;
 
         public GameFactory(IAssetProvider assetProvider, IStaticDataService staticDataService)
         {
             _assets = assetProvider;
             _staticDataService = staticDataService;
-        }
-
-        public PrefabPoolManager GetPrefabPoolManager()
-        {
-            if (_prefabPoolManager == null)
-            {
-                SpawnPrefabPoolManager();
-            }
-            
-            return _prefabPoolManager;
         }
 
         public void SpawnNetworkManager()
@@ -61,10 +51,15 @@ namespace Infrastructure.Factory
             _assets.CleanUp();
         }
         
-        public PrefabPoolManager SpawnPrefabPoolManager()
+        public PrefabPool GetSpawnBallPool()
         {
+            if (_prefabPoolManager != null)
+            {
+                return _prefabPoolManager;
+            }
             GameObject prefabPoolManagerPrefab = _assets.Instantiate(AssetAddress.PrefabPoolManager);
-            _prefabPoolManager = prefabPoolManagerPrefab.GetComponent<PrefabPoolManager>();
+            _prefabPoolManager = prefabPoolManagerPrefab.GetComponent<PrefabPool>();
+            _prefabPoolManager.Configure(_staticDataService.GameSettings.shootingSettings.ballPrefab);
             return _prefabPoolManager;
         }
 
