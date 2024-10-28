@@ -54,11 +54,11 @@ namespace Infrastructure.States
         {
             _environment.SetActive(true);
             _lobbyGameUIController.HideColorSelectorUI();
+            _gameFactory.GetSpawnBallPool();
         }
 
         private void PrepareScene()
         {
-            _gameFactory.GetSpawnBallPool();
             _environment = _gameFactory.SpawnEnvironment();
             _environment.SetActive(false);
             _colorSelectionController = _gameFactory.SpawnColorSelectionController();

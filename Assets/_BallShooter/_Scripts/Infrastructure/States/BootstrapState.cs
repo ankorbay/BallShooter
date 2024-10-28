@@ -1,10 +1,9 @@
 ﻿using _BallShooter._Scripts.Infrastructure.Services;
+using _BallShooter._Scripts.UI;
 using Infrastructure.Factory;
 using Infrastructure.Services;
-using Infrastructure.States.Infrastructure.States;
 using Logic;
 using Services;
-using Unity.Collections;
 using UnityEngine;
 
 namespace Infrastructure.States
@@ -15,6 +14,7 @@ namespace Infrastructure.States
         private readonly SceneLoader _sceneLoader;
         private readonly AllServices _services;
         private readonly LoadingCurtain _loadingCurtain;
+        private ColorSelectionController _colorSelectionController;
 
         public BootstrapState(GameStateMachine stateMachine, SceneLoader sceneLoader, LoadingCurtain loadingCurtain, AllServices services)
         {
@@ -27,12 +27,12 @@ namespace Infrastructure.States
         }
         public void Enter()
         {
-            _stateMachine.Enter<ColorSelectState>();
+            _services.Single<IGameFactory>().SpawnNetworkManager();
+            _stateMachine.Enter<GameLobbyState>();
         }
 
         public void Exit()
         {
-           
         }
         
         private void RegisterServices()

@@ -26,6 +26,7 @@ namespace _BallShooter._Scripts.UI
         public void Configure(IStaticDataService staticDataService)
         {
             _staticDataService = staticDataService;
+            CacheColor(_staticDataService.GameSettings.playerSettings.defaultColor);
         }
 
         private void OnEnable()
@@ -49,8 +50,13 @@ namespace _BallShooter._Scripts.UI
 
         private void ColorSelectorOnOnColorSelected(Color color)
         {
-            StaticVariables.characterColour = color;
+            CacheColor(color);
             SetupCharacterColours();
+        }
+
+        private void CacheColor(Color color)
+        {
+            StaticVariables.characterColour = color;
         }
 
         private void ButtonExit()
