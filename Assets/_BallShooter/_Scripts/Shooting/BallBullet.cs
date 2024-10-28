@@ -28,7 +28,7 @@ public class BallBullet : NetworkBehaviour
     void DestroySelf()
     {
         NetworkServer.UnSpawn(gameObject);
-        _ballPool.Return(gameObject);
+        if(_ballPool != null) _ballPool.Return(gameObject);
     }
     
     void OnTriggerEnter(Collider other)

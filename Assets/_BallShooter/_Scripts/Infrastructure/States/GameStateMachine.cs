@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Infrastructure.Services;
-using Infrastructure.States.Infrastructure.States;
 using Logic;
 using UnityEngine;
 
@@ -18,7 +17,6 @@ namespace Infrastructure.States
             _states = new Dictionary<Type, IExitableState>()
             {
                 [typeof(BootstrapState)] = new BootstrapState(this, sceneLoader, loadingCurtain, services),
-                [typeof(ColorSelectState)] = new ColorSelectState(this, sceneLoader, loadingCurtain, services),
                 [typeof(GameLobbyState)] = new GameLobbyState(this, sceneLoader, loadingCurtain, services),
             };
             _loadingCurtain = loadingCurtain;

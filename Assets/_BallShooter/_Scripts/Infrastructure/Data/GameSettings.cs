@@ -15,6 +15,7 @@ namespace _BallShooter._Scripts.Infrastructure.Data
     public class PlayersSettings
     {
         public GameObject playerPrefab;
+        public Color defaultColor;
     }
 
     [Serializable]
